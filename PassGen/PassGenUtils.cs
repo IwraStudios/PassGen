@@ -18,13 +18,17 @@ namespace Gravity.PassGen
             while (0 < length1--)
             {
                 char c = Mask[rnd.Next(0, Mask.Length)];
-                //if ("+-&|!(){}[]^\"~*?:\\".Contains(c)) res.Append("\\\\"); 
+                //if ("+-&|!(){}[]^\"~*?:\\".Contains(c)) res.Append("\\\\");
                 res.Append(c);
             }
             return res.ToString();
-        } 
-        public string GenTrueRandomPass(string Mask, int length1)
+        }
+
+        public string GenTrueRandomPass(string Mask, int length1) //using true random lib
         {
+          using Gravity.TrueRandom{
+            
+          }
             return null;
         }
     }
