@@ -23,27 +23,43 @@ namespace Gravity.PassGen
         {
             return null;
         } */
+        ///<summary>Generates an (PassGenMaskOptions) from lecagy parameters</summary>
+        ///<param name="maskop">outputs the (PassGenMaskOptions) for the parameters</param>
+        /// <param name="parameters">input of PassGenParameters where lecagy is enabled and legacy parameters are given</param>
         public void LegacyParser(PassGenParameters parameters, out PassGenMaskOptions maskop)
         {
             maskop = new PassGenMaskOptions();
             maskop.Init();
-            List<char[]> chars = new List<char[]>();
-            for (int i = 0; i > parameters.LegacyRules.Length; i = i + 2)
-            {
-                chars.Add(parameters.LegacyRules.Substring(i, 2).ToCharArray());
-            }
+            char[] chars = parameters.LegacyRules.ToCharArray();
             bool Record = false;
-            foreach (char[] ch in chars)
+            char lastchar = ' ';
+            byte count = 0;
+            int arraycount = 0;
+            foreach (char ch in chars)
             {
-                if (Record && ch[0] != '}')
+                if (Record && lastchar != '}') maskop.Mask.Add(lastchar.ToString().ToLower() + lastchar.ToString().ToUpper());
+                else Record = false; //if last character isn't the last in the string add the last to the masks in upper and lower case
+                if (count != 0)      //Else stop adding the last character
                 {
-                    maskop.Mask.Add(ch[1].ToString().ToLower() + ch[1].ToString().ToUpper());
-                    continue;
+                    int ab = 0;
+                    if(int.TryParse(lastchar.ToString(), out ab)) {
+                        // if it doesn't work(e.g. NaN), it won't addup and it goes to else
+                        arraycount += ab * (int)Math.Pow(10, count - 1);
+                    }
+                    else
+                    {
+                        count = 0;
+                        maskop.Mask.Add(maskop.CustomMasks[arraycount]);
+                        lastchar = ch;
+                        continue;
+                    }
+                    count++;
+
                 }
-                switch (ch[0])
+                switch (lastchar)
                 {
                     case '?':
-                        switch (ch[1])
+                        switch (ch)
                         {
                             case 'l': //lowercase
                                 maskop.Mask.Add(maskop.DefaultMasks[0]); //abcdefghijklmnopqrstuvwxyz
@@ -75,14 +91,21 @@ namespace Gravity.PassGen
                     case '}':
                         Record = false;
                         break;
+                    case '!': //Custom mask counting 0 as valid
+                        count = 1;
+                        break;
+                    default:
+
+                        break;
                 }
+                lastchar = ch;
             }
         }
     }
 
     public class PassGenGenerator
     {
-        public string MaskString(string s, PassGenParameters parameters)
+        public PassGenMaskOptions MaskString(string s, PassGenParameters parameters)
         {
             PassGenMaskOptions maskop;
             if (parameters.UseLegacyRules)
@@ -107,14 +130,16 @@ namespace Gravity.PassGen
             return null;
         }
         
-        public string MaskFromSeed(int seed, PassGenMaskOptions maskopt, out uint apos)
+        public string MaskFromSeed(int seed, PassGenMaskOptions maskopt, out ulong apos)
         {
-            apos = 1;
+            apos = 1; //amount possible var
             foreach(string s in maskopt.Mask) apos = apos * (uint)s.Length;
             return MaskFromSeed(seed, maskopt);
         }
         public string MaskFromSeed(int seed, PassGenMaskOptions maskopt)
         {
+            ulong apos = 1;
+            foreach (string s in maskopt.Mask) apos = apos * (uint)s.Length;
             return null;
         }      
     }
@@ -132,7 +157,7 @@ namespace Gravity.PassGen
     public class PassGenMaskOptions
     {
         public List<string> Mask = new List<string>();
-        public string[] CustomMasks; //max 100
+        public string[] CustomMasks; //max 100 in non-legacy mode
         public string[] DefaultMasks; //Init first
         public void Init()
         {
