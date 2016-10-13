@@ -4,9 +4,18 @@ using System.Collections.Generic;
 
 namespace Gravity.PassGen
 {
+    /// <summary>
+    /// Class for low level coding where you may need some hard coding
+    /// </summary>
     public class PassGenUtils
     {
-        public string GenRandomPass(string Mask, int length1)
+        /// <summary>
+        /// Generates an random string based on the "System.Random" algorithm
+        /// </summary>
+        /// <param name="Mask">All the possible character used in this string</param>
+        /// <param name="length1">The length of the returned string</param>
+        /// <returns></returns>
+        public string GenRandomPass(string Mask, int length1) //TODO: move to Generate instead of Utils
         {
             StringBuilder res = new StringBuilder();
             Random rnd = new Random();
@@ -24,12 +33,13 @@ namespace Gravity.PassGen
             return null;
         } */
         ///<summary>Generates an (PassGenMaskOptions) from lecagy parameters</summary>
-        ///<param name="maskop">outputs the (PassGenMaskOptions) for the parameters</param>
-        /// <param name="parameters">input of PassGenParameters where lecagy is enabled and legacy parameters are given</param>
+        ///<param name="maskop">Outputs the (PassGenMaskOptions) for the parameters</param>
+        /// <param name="parameters">Input of PassGenParameters where lecagy is enabled and legacy parameters are given</param>
         public void LegacyParser(PassGenParameters parameters, out PassGenMaskOptions maskop)
         {
             maskop = new PassGenMaskOptions();
             maskop.Init();
+            parameters.LegacyRules.Insert(parameters.LegacyRules.Length - 1, " ");
             char[] chars = parameters.LegacyRules.ToCharArray();
             bool Record = false;
             char lastchar = ' ';
@@ -91,7 +101,7 @@ namespace Gravity.PassGen
                     case '}':
                         Record = false;
                         break;
-                    case '!': //Custom mask counting 0 as valid
+                    case '!': //Custom mask use; counting 0 as valid
                         count = 1;
                         break;
                     default:
@@ -102,10 +112,18 @@ namespace Gravity.PassGen
             }
         }
     }
-
+    /// <summary>
+    /// class for top level commands that don't involve a lot of hard coding
+    /// </summary>
     public class PassGenGenerator
     {
-        public PassGenMaskOptions MaskString(string s, PassGenParameters parameters)
+        /// <summary>
+        /// function for the masking of one string using either legacy parameters or normal ones
+        /// </summary>
+        /// <param name="s">string wich is going to be masked</param>
+        /// <param name="parameters">parameter class containing all the options</param>
+        /// <returns></returns>
+        public string MaskString(string s, PassGenParameters parameters)
         {
             PassGenMaskOptions maskop;
             if (parameters.UseLegacyRules)
@@ -129,13 +147,25 @@ namespace Gravity.PassGen
             
             return null;
         }
-        
+        /// <summary>
+        /// Overload of Generates string from "seed" and "maskopt".
+        /// </summary>
+        /// <param name="seed">the seed as input</param>
+        /// <param name="maskopt">maskoptions for the masking</param>
+        /// <param name="apos">output of possible amount of seeds</param>
+        /// <returns>string wich contains the now masked word</returns>
         public string MaskFromSeed(int seed, PassGenMaskOptions maskopt, out ulong apos)
         {
             apos = 1; //amount possible var
             foreach(string s in maskopt.Mask) apos = apos * (uint)s.Length;
             return MaskFromSeed(seed, maskopt);
         }
+        /// <summary>
+        /// Generates string from "seed" and "maskopt"
+        /// </summary>
+        /// <param name="seed">the seed as input</param>
+        /// <param name="maskopt">mask options for the masking</param>
+        /// <returns>string wich contains the now masked word</returns>
         public string MaskFromSeed(int seed, PassGenMaskOptions maskopt)
         {
             ulong apos = 1;
