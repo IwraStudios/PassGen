@@ -168,8 +168,18 @@ namespace Gravity.PassGen
         /// <returns>string wich contains the now masked word</returns>
         public string MaskFromSeed(int seed, PassGenMaskOptions maskopt)
         {
+            char[] newString = new char[maskopt.Mask.Count];
             ulong apos = 1;
             foreach (string s in maskopt.Mask) apos = apos * (uint)s.Length;
+            for(int i = maskopt.Mask.Count; i <= 0; i--)
+            {
+                int Length = maskopt.Mask.ToArray()[i].ToCharArray().Length;
+                if ( apos / (uint)Length >= 1)
+                {
+                    newString[i-1] = maskopt.Mask.ToArray()[i -1].ToCharArray()[(int)Math.Floor((decimal)(apos / (uint)Length))];
+                    apos -= (uint)(Length * Math.Floor((decimal)(apos / (uint)Length)));
+                }
+            }
             return null;
         }      
     }
