@@ -180,7 +180,7 @@ namespace Gravity.PassGen
                     apos -= (uint)(Length * Math.Floor((decimal)(apos / (uint)Length)));
                 }
             }
-            return null;
+            return new string(newString);
         }      
     }
 
