@@ -52,7 +52,7 @@ namespace Gravity.PassGen
                 if (count != 0)      //Else stop adding the last character
                 {
                     int ab = 0;
-                    if(int.TryParse(lastchar.ToString(), out ab)) {
+                    if(int.TryParse(ch.ToString(), out ab)) {
                         // if it doesn't work(e.g. NaN), it won't addup and it goes to else
                         arraycount += ab * (int)Math.Pow(10, count - 1);
                     }
