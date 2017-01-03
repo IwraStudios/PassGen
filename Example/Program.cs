@@ -21,7 +21,11 @@ namespace Example
             {
                 Console.WriteLine(gen.MaskFromSeed(i, mask));
             }
+            PassGenWinUtils win = new PassGenWinUtils();
+            win.SaveAllToFile(Console.ReadLine(), mask, false);
+            Console.WriteLine("done");
             Console.ReadLine();
-        } 
+        }
+         
     }
 }

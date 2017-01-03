@@ -7,7 +7,7 @@ namespace Gravity.PassGen
     /// <summary>
     /// Class for low level coding where you may need some hard coding
     /// </summary>
-    public class PassGenUtils
+    public partial class PassGenUtils
     {
         /// <summary>
         /// Generates an random string based on the "System.Random" algorithm
@@ -147,6 +147,19 @@ namespace Gravity.PassGen
             
             return null;
         }
+
+        /// <summary>
+        /// Gets the amount of possiblities for this mask
+        /// </summary>
+        /// <param name="maskopt">Generator Mask</param>
+        /// <returns>amount of possibilities</returns>
+        public ulong MaskPossibility(PassGenMaskOptions maskopt)
+        {
+            ulong  apos = 1; //amount possible var
+            foreach (string s in maskopt.Mask) apos = apos * (uint)s.Length;
+            return apos;
+        }
+
         /// <summary>
         /// Overload of Generates string from "seed" and "maskopt".
         /// </summary>
