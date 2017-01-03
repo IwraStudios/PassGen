@@ -7,7 +7,7 @@ namespace Gravity.PassGen
     /// <summary>
     /// Class for low level coding where you may need some hard coding
     /// </summary>
-    public class PassGenUtils
+    public partial class PassGenUtils
     {
         /// <summary>
         /// Generates an random string based on the "System.Random" algorithm
@@ -105,7 +105,7 @@ namespace Gravity.PassGen
                         count = 1;
                         break;
                     default:
-
+                        
                         break;
                 }
                 lastchar = ch;
@@ -147,6 +147,19 @@ namespace Gravity.PassGen
             
             return null;
         }
+
+        /// <summary>
+        /// Gets the amount of possiblities for this mask
+        /// </summary>
+        /// <param name="maskopt">Generator Mask</param>
+        /// <returns>amount of possibilities</returns>
+        public ulong MaskPossibility(PassGenMaskOptions maskopt)
+        {
+            ulong  apos = 1; //amount possible var
+            foreach (string s in maskopt.Mask) apos = apos * (uint)s.Length;
+            return apos;
+        }
+
         /// <summary>
         /// Overload of Generates string from "seed" and "maskopt".
         /// </summary>
@@ -154,7 +167,7 @@ namespace Gravity.PassGen
         /// <param name="maskopt">maskoptions for the masking</param>
         /// <param name="apos">output of possible amount of seeds</param>
         /// <returns>string wich contains the now masked word</returns>
-        public string MaskFromSeed(int seed, PassGenMaskOptions maskopt, out ulong apos)
+        public string MaskFromSeed(uint seed, PassGenMaskOptions maskopt, out ulong apos)
         {
             apos = 1; //amount possible var
             foreach(string s in maskopt.Mask) apos = apos * (uint)s.Length;
@@ -166,29 +179,30 @@ namespace Gravity.PassGen
         /// <param name="seed">the seed as input</param>
         /// <param name="maskopt">mask options for the masking</param>
         /// <returns>string wich contains the now masked word</returns>
-        public string MaskFromSeed(int seed, PassGenMaskOptions maskopt)
+        public string MaskFromSeed(ulong seed, PassGenMaskOptions maskopt)
         {
             char[] newString = new char[maskopt.Mask.Count];
-            ulong apos = 1;
-            foreach (string s in maskopt.Mask) apos = apos * (uint)s.Length;
-            for(int i = maskopt.Mask.Count; i <= 0; i--)
+            ulong next = seed;
+            for(int c=0,i = maskopt.Mask.Count-1; i > -1; i--, c++)
             {
-                int Length = maskopt.Mask.ToArray()[i].ToCharArray().Length;
-                if ( apos / (uint)Length >= 1)
-                {
-                    newString[i-1] = maskopt.Mask.ToArray()[i -1].ToCharArray()[(int)Math.Floor((decimal)(apos / (uint)Length))];
-                    apos -= (uint)(Length * Math.Floor((decimal)(apos / (uint)Length)));
-                }
-            }
+                int Length = maskopt.Mask.ToArray()[i].Length;
+                    ulong thiss = next % (uint)Length;
+                    next = next / (uint)Length;
+                    newString[i] = maskopt.Mask.ToArray()[i].ToCharArray()[thiss];
+                    //apos -= (uint)(Length * Math.Floor((decimal)(apos / (uint)Length)));
+                    //apos = apos / (uint)Length;
+           }
             return new string(newString);
         }      
     }
-
+    // next = seed / length
+    // this = seed % length
 
     public class PassGenParameters
     {
         public bool UseLegacyRules;
         public string LegacyRules;
+
         public byte additiveAmount; //max added characters
         public string additiveMask;
         public byte changeAmount; //max Simultanius changed letters, additive not counted
@@ -204,7 +218,7 @@ namespace Gravity.PassGen
             DefaultMasks = new string[6];
             DefaultMasks[0] = "abcdefghijklmnopqrstuvwxyz";
             DefaultMasks[1] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            DefaultMasks[2] = "1234567890";
+            DefaultMasks[2] = "0123456789";
             DefaultMasks[3] = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
         }
     }
