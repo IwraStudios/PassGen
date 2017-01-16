@@ -35,12 +35,12 @@ namespace Gravity.PassGen
         ///<summary>Generates an (PassGenMaskOptions) from lecagy parameters</summary>
         ///<param name="maskop">Outputs the (PassGenMaskOptions) for the parameters</param>
         /// <param name="parameters">Input of PassGenParameters where lecagy is enabled and legacy parameters are given</param>
-        public void LegacyParser(PassGenParameters parameters, out PassGenMaskOptions maskop)
+        public void LegacyParser(string legacyparameter, out PassGenMaskOptions maskop)
         {
             maskop = new PassGenMaskOptions();
             maskop.Init();
-            parameters.LegacyRules.Insert(parameters.LegacyRules.Length - 1, " ");
-            char[] chars = parameters.LegacyRules.ToCharArray();
+            legacyparameter.Insert(legacyparameter.Length - 1, " ");
+            char[] chars = legacyparameter.ToCharArray();
             bool Record = false;
             char lastchar = ' ';
             byte count = 0;
@@ -128,7 +128,7 @@ namespace Gravity.PassGen
             PassGenMaskOptions maskop;
             if (parameters.UseLegacyRules)
             {
-               new PassGenUtils().LegacyParser(parameters, out maskop);
+               new PassGenUtils().LegacyParser(parameters.LegacyRules, out maskop);
             }
             else
             {
@@ -139,13 +139,13 @@ namespace Gravity.PassGen
                 for (int i = 0; i > parameters.additiveAmount; i++){ maskop.Mask.Add(parameters.additiveMask); }
                 foreach (char c in s.ToCharArray())
                 {
-                    maskop.Mask.Add(maskop.CustomMasks[0]);
+                    maskop.Mask.Add(maskop.CustomMasks[0]); //TODO: not good
                 }
                 for (int i = 0; i > parameters.additiveAmount; i++) { maskop.Mask.Add(parameters.additiveMask); }
             }
             ///Start Algorithm of Mask(input) Single time
-            
-            return null;
+            ulong a = MaskPossibility(maskop);
+            return MaskFromSeed((uint)new Random().Next(1, (int)a), maskop);
         }
 
         /// <summary>

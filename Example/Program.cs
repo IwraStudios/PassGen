@@ -16,7 +16,7 @@ namespace Example
             PassGenUtils util = new PassGenUtils();
             PassGenParameters para = new PassGenParameters() { UseLegacyRules = true, LegacyRules = lecagy };
             PassGenMaskOptions mask;
-            util.LegacyParser(para, out mask);
+            util.LegacyParser(lecagy, out mask);
             for(uint i = 0; i < 100; i++)
             {
                 Console.WriteLine(gen.MaskFromSeed(i, mask));
