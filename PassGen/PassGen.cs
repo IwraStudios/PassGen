@@ -7,7 +7,7 @@ namespace Gravity.PassGen
     /// <summary>
     /// Class for low level coding where you may need some hard coding
     /// </summary>
-    public partial class PassGenUtils
+    public static class PassGenUtils
     {
         /// <summary>
         /// Generates an random string based on the "System.Random" algorithm
@@ -15,7 +15,7 @@ namespace Gravity.PassGen
         /// <param name="Mask">All the possible character used in this string</param>
         /// <param name="length1">The length of the returned string</param>
         /// <returns></returns>
-        public string GenRandomPass(string Mask, int length1) //TODO: move to Generate instead of Utils
+        public static string GenRandomPass(string Mask, int length1) //TODO: move to Generate instead of Utils
         {
             StringBuilder res = new StringBuilder();
             Random rnd = new Random();
@@ -28,17 +28,12 @@ namespace Gravity.PassGen
             return res.ToString();
         }
 
-        /*public string GenTrueRandomPass(string Mask, int length1) //TODO: add plugin to PassGen
-        {
-            return null;
-        } */
         ///<summary>Generates an (PassGenMaskOptions) from lecagy parameters</summary>
         ///<param name="maskop">Outputs the (PassGenMaskOptions) for the parameters</param>
         /// <param name="parameters">Input of PassGenParameters where lecagy is enabled and legacy parameters are given</param>
-        public void LegacyParser(string legacyparameter, out PassGenMaskOptions maskop)
+        public static void LegacyParser(string legacyparameter, out PassGenMaskOptions maskop)
         {
             maskop = new PassGenMaskOptions();
-            maskop.Init();
             legacyparameter.Insert(legacyparameter.Length - 1, " ");
             char[] chars = legacyparameter.ToCharArray();
             bool Record = false;
@@ -128,12 +123,11 @@ namespace Gravity.PassGen
             PassGenMaskOptions maskop;
             if (parameters.UseLegacyRules)
             {
-               new PassGenUtils().LegacyParser(parameters.LegacyRules, out maskop);
+               PassGenUtils.LegacyParser(parameters.LegacyRules, out maskop);
             }
             else
             {
                 maskop = new PassGenMaskOptions();
-                maskop.Init();
                 maskop.CustomMasks = new string[1];
                 maskop.CustomMasks[0] = parameters.changeMask;
                 for (int i = 0; i > parameters.additiveAmount; i++){ maskop.Mask.Add(parameters.additiveMask); }
@@ -189,14 +183,10 @@ namespace Gravity.PassGen
                     ulong thiss = next % (uint)Length;
                     next = next / (uint)Length;
                     newString[i] = maskopt.Mask.ToArray()[i].ToCharArray()[thiss];
-                    //apos -= (uint)(Length * Math.Floor((decimal)(apos / (uint)Length)));
-                    //apos = apos / (uint)Length;
            }
             return new string(newString);
         }      
     }
-    // next = seed / length
-    // this = seed % length
 
     public class PassGenParameters
     {
@@ -213,7 +203,7 @@ namespace Gravity.PassGen
         public List<string> Mask = new List<string>();
         public string[] CustomMasks; //max 100 in non-legacy mode
         public string[] DefaultMasks; //Init first
-        public void Init()
+        public PassGenMaskOptions()
         {
             DefaultMasks = new string[6];
             DefaultMasks[0] = "abcdefghijklmnopqrstuvwxyz";
@@ -223,7 +213,7 @@ namespace Gravity.PassGen
         }
     }
 
-    public class PassGenConst
+    public static class PassGenConst
     {
         public const string Mask_aZ09 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         public const string Mask_aZ09_SPcompatible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_-+=";
