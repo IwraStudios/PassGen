@@ -6,6 +6,7 @@ Library and Tools for password (list) generation
 * Saving wordlists to file (windows only atm)
 * Source-bound documentation for VS
 * MaskOptions(class) possible combinations calculator
+* Mono/Xamarin Compatible
 
 ##Roadmap
 * add more features
