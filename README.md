@@ -3,7 +3,7 @@ Library and Tools for password (list) generation
 
 ##Features
 * Hashcat-Mask-style wordlist generator (See examples)
-* Saving to Wordlists to file (windows only atm)
+* Saving wordlists to file (windows only atm)
 * Source-bound documentation for VS
 * MaskOptions(class) possible combinations calculator
 
